@@ -1,0 +1,25 @@
+{
+  "name": "humanitys-last-saas",
+  "version": "0.1.0",
+  "description": "An OpenCode plugin and agent team that builds a SaaS from one sentence: ideation, proof, design, build, copy, verify",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "agents",
+    "skills"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  },
+  "license": "MIT"
+}
