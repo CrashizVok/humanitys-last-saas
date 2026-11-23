@@ -1,47 +1,49 @@
 ---
 name: deploy-it
-description: Deploy a built MVP to Vercel or Fly.io, verify auth, capture live URL, and roll back on failure.
+description: Deploy a built MVP as a single production Docker container, verify auth, capture live URL, and roll back on failure.
 ---
 
 # Deploy It
 
-Use this skill after the app builds and the core flow works locally. The goal is a live URL with a
-recorded deploy trail, or a clear blocker with no fake success.
+Use this skill after the app builds, the Docker image builds, and the core flow works locally. The
+goal is a live URL with a recorded deploy trail, or a clear blocker with no fake success.
 
 ## Choose target
 
-- **Vercel** default for static sites, Next.js, and simple serverless apps.
-- **Fly.io** when the app needs a long-running backend, worker, persistent process, or custom
-  container runtime.
+- **Fly.io** default for the single production Docker container MVP.
+- **Another container-capable target** only when it runs the same image/container with equivalent
+  HTTPS, env var, and rollback support.
+- **Vercel** only for non-Dockerized legacy cases explicitly allowed by the lead; not the default
+  for the one-container MVP.
 
 Write the choice and one-line reason to `.saas/log.md`.
 
 ## Preflight
 
-1. Confirm the app builds locally. Record the command and tail output in `.saas/log.md`.
+1. Confirm the production build and Docker image build pass locally. Record commands and tail output
+   in `.saas/log.md`.
 2. Check CLI auth:
-   - Vercel: `vercel whoami`
    - Fly.io: `fly auth whoami`
+   - Vercel (legacy exception only): `vercel whoami`
 3. If auth is missing, do not guess credentials. Record the blocker in `.saas/state.md` and
    `.saas/README.md`, then stop the deploy step.
 4. Identify required env vars from `.env.example`, README, or config. Never print secret values.
    Confirm they are set in the deploy target or document the exact missing names.
+5. Confirm the container runs with production env, listens on the expected port, and has no dev-only
+   commands.
 
 ## Deploy
 
-### Vercel
+### Docker sanity check
 
 ```sh
-# first deploy in project
-vercel --yes
-# production deploy
-vercel --prod --yes
+docker build -t mvp-app .
+docker run --rm -p 3000:3000 --env-file .env.example mvp-app
 ```
 
-Capture the production URL from command output. The admin dashboard is usually
-`https://vercel.com/dashboard` or the project-specific URL shown by the CLI.
+Adjust image name, port, and env file to the project. Record the result.
 
-### Fly.io
+### Fly.io (default)
 
 ```sh
 fly launch --now --copy-config --yes
@@ -51,6 +53,16 @@ fly deploy
 
 Capture the app URL (`https://<app>.fly.dev` unless custom domain). The admin dashboard is
 `https://fly.io/apps/<app>`.
+
+### Vercel (legacy exception only)
+
+```sh
+vercel --yes
+vercel --prod --yes
+```
+
+Use only when the lead explicitly allows a non-Docker deploy. Capture the production URL and admin
+dashboard URL from CLI output.
 
 ## Record success
 

@@ -1,21 +1,32 @@
 # Layout
 
-## 1. Landing
-- Headline: know what you earned after exchange fees
-- Subhead: invoice in one currency, record payout in another
-- CTA: Create invoice
-- Proof slots: competitor gap, three quotes summary
+## Landing page (single page)
 
-## 2. Invoice form
-- Fields: client, source amount/currency, payout amount/currency, fee
-- CTA: Calculate net
+1. **Hero**
+   - Headline: know what you earned after exchange fees
+   - Subhead: for freelance translators who invoice in one currency and get paid in another
+   - Primary CTA: Join waitlist
+   - Secondary CTA: See packages
 
-## 3. Result
-- Net earnings
-- Fee impact
-- Fake-door CTA: Save with Pro (Coming soon intent capture)
+2. **Problem / value**
+   - Pain points from proof quotes
+   - Simple value statement: fee-adjusted earnings before you send the invoice
 
-## 4. Feedback
-- Route: /feedback
-- Fields: message, optional screenshot
-- CTA: Send feedback
+3. **How it works**
+   - Three steps: enter invoice, enter payout/fee, see net earnings
+   - Note: MVP landing page captures interest; full app coming soon
+
+4. **Pricing / packages (Coming soon)**
+   - Starter - [[? price]] - Coming soon
+   - Pro - [[? price]] - Coming soon
+   - CTA behavior: log intent, show "Coming soon", no charge
+
+5. **Feedback / trust**
+   - Short FAQ
+   - /feedback link with screenshot capture
+
+6. **Footer**
+   - Privacy/simple terms links (placeholders if needed)
+   - Analytics disclosure
+
+No dashboard screens. No authenticated app area.

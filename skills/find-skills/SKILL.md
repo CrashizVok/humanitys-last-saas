@@ -26,7 +26,7 @@ This wraps the Vercel Skills CLI workflow (`npx skills`).
 npx skills find [query]
 ```
 
-Try specific queries first (`react performance`, `playwright e2e`, `seo audit`).
+Try specific queries first (`react performance`, `playwright e2e`, `seo audit`, `product hunt trend research`).
 4. **Verify quality before installing:**
    - Prefer 1K+ installs. Under 100 installs is a warning.
    - Prefer reputable sources (`vercel-labs`, `anthropics`, `microsoft`) or well-known maintainers.

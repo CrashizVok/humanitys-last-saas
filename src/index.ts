@@ -88,10 +88,13 @@ export default Plugin.define({
           "MVP factory hooks:",
           "- Load `find-skills` before starting a phase when the right skill is not already known. Log the chosen skill or fallback in .saas/log.md.",
           "- If find-skills fails or returns no quality result, fall back to cached/bundled skills and continue. Never stall on skill discovery.",
-          "- After a successful build, deploy with the deploy-it skill (Vercel default, Fly.io for backend-heavy apps). Record the live URL in .saas/README.md and .saas/state.md.",
+          "- During market research, check current trend sources (Product Hunt, Hacker News, Indie Hackers, Google Trends) and prefer quickly launchable SaaS ideas with narrow MVP scope.",
+          "- Build a production-ready landing page in one Docker container. No real dashboard or authenticated app area. Include pricing/packages marked Coming soon with fake-door intent capture.",
+          "- Write secure-by-default code: validate input, no secrets in client, safe headers, minimal dependencies, no dangerous user-input execution.",
+          "- After a successful build and Docker build, deploy with the deploy-it skill (Fly.io default for Dockerized MVPs). Record the live URL in .saas/README.md and .saas/state.md.",
           "- If deployment fails, roll back to the last working deployed version, log the reason in .saas/log.md, and do not claim a live URL.",
           "- Every built app must include lightweight analytics (Plausible or Umami), a fake-door pay intent log, and a /feedback route with screenshot capture.",
-          "- Run saas-validator Playwright checks before handoff. A core flow that cannot complete is FAIL.",
+          "- Run saas-validator Playwright checks before handoff. A core landing-page flow that cannot complete is FAIL.",
           "- Record kill criteria and measured metrics in .saas/state.md; check them before continuing work.",
         ].join("\n"),
       } as any)
@@ -99,7 +102,7 @@ export default Plugin.define({
 
     await ctx.session.hook("prompt", async (input) => {
       const text = input.prompt?.text ?? ""
-      if (!/\b(deploy|validate|kill criteria|analytics|feedback|skill|find-skills)\b/i.test(text)) return
+      if (!/\b(deploy|validate|kill criteria|analytics|feedback|skill|find-skills|trend|product hunt|launch)\b/i.test(text)) return
       input.metadata = {
         ...(input.metadata ?? {}),
         mvpFactory: {
@@ -107,6 +110,7 @@ export default Plugin.define({
           validate: /\bvalidate\b/i.test(text),
           metrics: /\b(kill criteria|analytics|feedback)\b/i.test(text),
           skillDiscovery: /\b(skill|find-skills)\b/i.test(text),
+          trendResearch: /\b(trend|product hunt|launch)\b/i.test(text),
         },
       }
     })

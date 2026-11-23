@@ -14,6 +14,18 @@
 2. "Accounting software is overkill, I just want to know what I actually earned after fees." - https://example.com/forum/freelance-2 (2026-01-28)
 3. "I track exchange fees in a spreadsheet because invoices don't show the loss clearly." - https://example.com/community/translator-3 (2025-11-04)
 
+## Trend signals
+
+- Product Hunt invoicing category shows steady recent launches, but most target general invoicing or AI workflows, not translator fee-adjusted earnings. https://www.producthunt.com/topics/invoicing (2026-10-30)
+- Public freelancer discussions continue to mention exchange-rate and fee uncertainty as a recurring pain point. https://news.ycombinator.com/ (2026-09-14) UNVERIFIED: replace with exact thread URL in a real run.
+- Narrow finance micro-tools remain a quick-launch pattern on Indie Hackers compared with full accounting suites. https://www.indiehackers.com/ (2026-08-20) UNVERIFIED: replace with exact post URL in a real run.
+
+## Launch-speed assessment
+
+Quick MVP is feasible: invoice form, currency/fee inputs, net calculation, and saved records. No
+bank integration, no compliance-heavy payment rails, no marketplace cold-start. Main risk is trust
+in exchange-rate handling; MVP can start with manual rates.
+
 ## Gap
 Freelance translators who invoice in one currency and receive in another cannot quickly see
 fee-adjusted earnings at invoice time.

@@ -14,6 +14,11 @@ and show the real fee-adjusted margin.
 ## Proof verdict
 gap
 
+## Trend / launch signals
+- Product Hunt invoicing launches show active demand, but weak coverage for translator fee-adjusted earnings (2026-10-30).
+- Public freelancer discussions continue to report exchange-fee uncertainty (2026-09-14, UNVERIFIED exact URL).
+- Launch-speed assessment: quick MVP feasible; no bank sync, compliance-heavy payments, or marketplace cold-start.
+
 ## Kill criteria
 KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days
 
@@ -31,16 +36,18 @@ KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days
 - .saas/design/shots/
 
 ## Build status
-- App builds and starts locally.
-- Core flow verified by saas-validator: PASS.
+- Production app builds locally and runs in one Docker container.
+- Landing-page flow verified by saas-validator: PASS.
 - Analytics: Plausible snippet present.
-- Fake-door pricing intent: logs to local event store and shows "Coming soon".
+- Fake-door pricing/packages: visible as "Coming soon", intent logged, no real charge.
+- No real dashboard or authenticated app area.
 - Feedback route: /feedback stores issue payload and screenshot.
+- Security: input validation, safe headers, no secrets in client, minimal dependencies.
 
 ## Deploy
-- Live URL: https://fx-invoice-ledger.vercel.app
-- Admin dashboard: https://vercel.com/example/fx-invoice-ledger
-- Analytics dashboard: https://plausible.io/fx-invoice-ledger.vercel.app
+- Live URL: https://fx-invoice-ledger.fly.dev
+- Admin dashboard: https://fly.io/apps/fx-invoice-ledger
+- Analytics dashboard: https://plausible.io/fx-invoice-ledger.fly.dev
 - Last rollback: none
 
 ## Skill choices

@@ -45,7 +45,9 @@ If a screenshot fails, say so and use the next reference. Never describe a page 
 # Output
 
 - `.saas/design/tokens.css`: colors, type scale, spacing, radii, shadows, as CSS variables.
-- `.saas/design/layout.md`: one section per screen, in order, with the copy slots named.
+- `.saas/design/layout.md`: landing page sections in order, with copy slots named. Include hero,
+  problem/value, how it works, pricing/packages with "Coming soon" state, feedback/CTA, and footer.
+  No dashboard screens.
 - `.saas/design/shots/`: the reference screenshots and one screenshot of the built page once it
   exists.
 - `.saas/design/architecture.svg` or `.html`: only when the app has services, jobs, or data flow
@@ -56,5 +58,7 @@ If a screenshot fails, say so and use the next reference. Never describe a page 
 - One type system, one spacing scale. No second accent color because a section felt empty.
 - Real content in the mock, taken from the proof file. Lorem ipsum is not a design.
 - Mobile layout is part of the deliverable, not a later phase.
+- Design for a single production landing page in one Docker container. No real dashboard, no
+  authenticated app area.
 
 Return the file list and the one design decision you would defend in a review.

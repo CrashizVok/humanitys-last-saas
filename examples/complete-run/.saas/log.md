@@ -12,18 +12,21 @@ Phase: growth → Found skill: growth-copy → Loaded from: bundled (humanitys-l
 ## 2026-11-23 build
 $ npm run build
 > fx-invoice-ledger@0.1.0 build
-> vite build
-✓ built in 2.14s
+> next build
+✓ Compiled successfully
+
+$ docker build -t fx-invoice-ledger .
+Successfully tagged fx-invoice-ledger:latest
 
 ## 2026-11-23 deploy
-$ vercel whoami
+$ fly auth whoami
 example-user
 
-$ vercel --prod --yes
-https://fx-invoice-ledger.vercel.app
+$ fly deploy
+https://fx-invoice-ledger.fly.dev
 
 ## 2026-11-23 validate
 $ npx playwright test
-3 passed (18.2s)
+4 passed (21.4s)
 
 VALIDATOR: PASS

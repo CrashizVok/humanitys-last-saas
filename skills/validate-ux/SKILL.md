@@ -19,12 +19,12 @@ not enough; a user must be able to complete the core job.
 
 Run Playwright tests or scripted browser checks for:
 
-1. Landing/home loads.
-2. User can reach the core action.
-3. User can complete the core flow end to end.
-4. Fake-door pay action logs intent and shows "Coming soon" (no real charge).
-5. `/feedback` route accepts feedback and screenshot attachment/capture path works.
-6. Analytics snippet is present in the built page.
+1. Landing page loads in production mode/container target.
+2. Hero/value prop, pricing/packages section, and "Coming soon" package state are visible.
+3. User can click a paid/package CTA, intent is logged, and UI shows "Coming soon" with no charge.
+4. `/feedback` route accepts feedback and screenshot attachment/capture path works.
+5. Analytics snippet is present in the built page.
+6. No real dashboard/app route is exposed (no authenticated dashboard, no admin product UI).
 
 Save screenshots to `.saas/verify/` on failure and optionally on pass.
 

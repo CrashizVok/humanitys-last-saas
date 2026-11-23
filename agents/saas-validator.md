@@ -34,11 +34,12 @@ Load the selected skill and follow it.
 
 # Checks
 
-- Start or reach the running app. If the app is not running, start it and record the command in
-  `.saas/log.md`.
-- Run Playwright end-to-end checks for the core user flow named in `.saas/state.md` or
-  `.saas/proof.md`.
-- Confirm analytics snippet presence, fake-door pay intent logging, and `/feedback` route behavior.
+- Start or reach the running app (prefer the production Docker container). If the app is not
+  running, start it and record the command in `.saas/log.md`.
+- Run Playwright end-to-end checks for the landing-page core flow: load landing page, review
+  pricing/packages, click paid CTA, confirm "Coming soon" intent capture, submit feedback.
+- Confirm analytics snippet presence, fake-door pay intent logging, `/feedback` route behavior, and
+  that no real dashboard route exists.
 - Capture screenshots on failure and save them under `.saas/verify/`.
 
 # Output

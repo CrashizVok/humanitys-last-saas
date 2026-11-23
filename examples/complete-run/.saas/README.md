@@ -1,15 +1,24 @@
 # FX Invoice Ledger - MVP handoff
 
 ## What it is
-A small bookkeeping tool for freelance translators who invoice in one currency and get paid in
-another. It shows fee-adjusted earnings per invoice.
+A landing page MVP for freelance translators who invoice in one currency and get paid in another.
+It explains the value prop, shows packages as coming soon, and captures interest.
 
 ## Live URL
-- App: https://fx-invoice-ledger.vercel.app
-- Admin dashboard: https://vercel.com/example/fx-invoice-ledger
-- Analytics dashboard: https://plausible.io/fx-invoice-ledger.vercel.app
+- App: https://fx-invoice-ledger.fly.dev
+- Admin dashboard: https://fly.io/apps/fx-invoice-ledger
+- Analytics dashboard: https://plausible.io/fx-invoice-ledger.fly.dev
 
 ## How to run
+
+Production Docker container:
+
+```sh
+docker build -t fx-invoice-ledger .
+docker run --rm -p 3000:3000 --env-file .env.example fx-invoice-ledger
+```
+
+Local dev (if needed):
 
 ```sh
 npm install
@@ -24,9 +33,10 @@ npm run validate
 ```
 
 ## Core flow
-1. Create an invoice in source currency.
-2. Record payout amount and fee in settlement currency.
-3. See net earnings and margin.
+1. Open the landing page.
+2. Review pricing/packages marked "Coming soon".
+3. Click a package CTA; intent is logged and UI shows "Coming soon".
+4. Submit feedback through `/feedback`.
 
 ## Kill criteria
 KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days
@@ -38,24 +48,32 @@ Use the kill criteria as a decision rule, not a vanity dashboard.
 - **Signup rate (acquisition):** signups or signup clicks divided by unique visitors. Below 5%
   after 100 visitors means the value proposition or audience is weak. Before killing, check
   traffic quality and headline clarity.
-- **Core-flow completion (activation):** users who finish the main job divided by users who start
-  it. A low rate points to UX friction; look at the validator FAIL step and `/feedback`.
-- **Fake-door pay intent:** clicks on pricing/pay CTA that show "Coming soon". This measures
+- **Core-flow completion (activation):** users who finish the main landing-page flow divided by
+  users who start it. A low rate points to UX friction; look at the validator FAIL step and
+  `/feedback`.
+- **Fake-door pay intent:** clicks on pricing/package CTA that show "Coming soon". This measures
   willingness to pay before you build billing. Treat it as a signal, not revenue.
 - **Churn / return (retention):** users who do not return within 7 days. Above 80% churn after 7
   days means the product did not earn a second use. Check feedback before changing features.
 - **Decision:** if a kill threshold is crossed, stop building new features. Record the evidence in
   `.saas/state.md`, write what you learned, and move to the next idea.
 
-## What is stubbed
-- Exchange rates are manual entry.
-- Fake-door pricing records intent only; no Stripe/billing.
+## What is stubbed / coming soon
+- All packages/pricing are fake-door only; no Stripe/billing.
+- No real dashboard or authenticated app area.
 - Feedback creates a local log entry; GitHub issue/email integration needs credentials.
 
+## Security notes
+- User input is validated server-side.
+- No secrets in client code; env vars documented in `.env.example`.
+- Basic security headers enabled in production.
+- Fake-door and feedback logs avoid storing sensitive personal data.
+
 ## Deploy
-Deployed with `deploy-it` to Vercel. Rollback command: `vercel rollback <deployment-url>`.
+Deployed as a single production Docker container with `deploy-it` (Fly.io default). Rollback
+command: `fly releases rollback`.
 
 ## Human still has to do
 - Add production analytics domain and verify events.
 - Connect feedback route to GitHub Issues or support email.
-- Decide real pricing and replace fake-door flow.
+- Decide real pricing and replace fake-door flow when you are ready to build billing.

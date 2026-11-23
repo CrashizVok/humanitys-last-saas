@@ -29,10 +29,10 @@ Then in a project:
 | Agent | Mode | Skills it may load | Job |
 | --- | --- | --- | --- |
 | `saas` | primary | `find-skills` | Runs the loop, owns `.saas/state.md`, routes phases |
-| `saas-ideator` | subagent | `find-skills`, `jarvis-*` fallback | Research first ideation, returns two defensible ideas |
-| `saas-prover` | subagent | `find-skills`, `proofe-it` fallback | Verdict `gap` or `no gap` with named competitors, quotes, and kill criteria |
+| `saas-ideator` | subagent | `find-skills`, `jarvis-*` fallback | Trend-aware research first ideation, returns two quickly launchable ideas |
+| `saas-prover` | subagent | `find-skills`, `proofe-it` fallback | Verdict `gap` or `no gap` with competitors, quotes, trend signals, launch-speed, and kill criteria |
 | `saas-designer` | subagent | `find-skills`, `steal-a-design`, `every-diagram` fallback | Tokens, layout, screenshots, architecture diagram |
-| `saas-builder` | subagent | `find-skills`, `ttfr`, `keep-going`, `deploy-it`, `validate-ux` | Builds, deploys, records live URL or blocker |
+| `saas-builder` | subagent | `find-skills`, `ttfr`, `keep-going`, `deploy-it`, `validate-ux` | Builds a secure production landing page in one Docker container, deploys, records live URL or blocker |
 | `saas-writer` | subagent | `find-skills`, `humanize` | Every user-visible string, checker must exit 0 |
 | `saas-validator` | subagent | `find-skills`, `validate-ux` | Playwright core-flow check, reports `PASS` or `FAIL + exact step` |
 | `saas-growth-writer` | subagent | `find-skills`, `humanize`, `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
@@ -48,8 +48,8 @@ cached/discovered skill locations (`~/.cache/humanitys-last-saas/`, `~/.agents/s
 
 During each phase, agents use `find-skills` to discover the best skill for the task:
 
-- `saas-ideator`: "SaaS market research and ideation"
-- `saas-prover`: "competitor analysis and validation"
+- `saas-ideator`: "SaaS market research, trend discovery, and ideation"
+- `saas-prover`: "competitor analysis, trend validation, and market proof"
 - `saas-designer`: "UI design token extraction and layout"
 - `saas-builder`: "best skill for the detected stack (React/Next/Vue/Svelte)"
 - `saas-writer`: "human-sounding copywriting"
@@ -75,7 +75,7 @@ These ship inside the plugin and are always available as fallbacks/bootstrap:
 | --- | --- |
 | `find-skills` | Dynamic skill discovery meta-skill |
 | `humanize` | Human-sounding copy and checker |
-| `deploy-it` | Vercel/Fly deploy, auth checks, rollback |
+| `deploy-it` | Dockerized production deploy, auth checks, rollback |
 | `validate-ux` | Playwright MVP validation |
 | `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
 
@@ -110,8 +110,8 @@ Optional. The defaults need no config.
 .saas/
 ├── state.md          decisions, gates, kill criteria, metrics, deploy URL, skill choices, next action
 ├── log.md            command output and skill discovery decisions
-├── ideas.md          survivors, difference sentences, rejections
-├── proof.md          competitors, quotes, gap, wedge, kill criteria
+├── ideas.md          survivors, difference sentences, trend signals, launch scope, rejections
+├── proof.md          competitors, quotes, trend signals, launch-speed assessment, gap, wedge, kill criteria
 ├── design/           tokens, layout, shots, architecture
 ├── growth/           headlines, SEO, onboarding emails, fake-door pricing
 ├── feedback.md       user feedback and screenshots
@@ -121,8 +121,17 @@ Optional. The defaults need no config.
 
 ## MVP factory guarantees
 
-- **Deploy:** `saas-builder` loads `deploy-it` after a successful build. Default is Vercel; Fly.io
-  for backend-heavy apps. Deploy failures roll back to the last working deployment and log why.
+- **Trend-aware research:** `saas-ideator` and `saas-prover` check current trend sources (Product
+  Hunt, Hacker News, Indie Hackers, Google Trends, and similar public signals) and favor quickly
+  launchable SaaS ideas with a narrow MVP scope.
+- **One-container production MVP:** the built app ships as a production-ready landing page in one
+  Docker container. No real dashboard or authenticated app area is created.
+- **Pricing/packages coming soon:** the landing page includes packages/pricing, but every paid CTA
+  is a fake-door intent capture that shows "Coming soon" and does not charge.
+- **Secure by default:** generated code validates input, keeps secrets out of the client, uses safe
+  security headers, avoids dangerous user-input execution, and keeps dependencies minimal.
+- **Deploy:** `saas-builder` loads `deploy-it` after a successful build and Docker build. Default is
+  Fly.io for Dockerized MVPs. Deploy failures roll back to the last working deployment and log why.
 - **Analytics:** every built app includes a lightweight Plausible or Umami snippet and a fake-door
   pay intent action that logs interest and shows "Coming soon".
 - **Validation:** `saas-validator` runs Playwright end-to-end checks and reports `PASS` or
