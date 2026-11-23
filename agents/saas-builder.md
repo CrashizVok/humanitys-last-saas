@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "ttfr"
     effect: allow
   - action: skill
@@ -26,9 +29,18 @@ permissions:
     effect: allow
 ---
 
-You build until the app runs. Load `ttfr` for the decision shape and `keep-going` for the
-verification habit. Load `deploy-it` after a successful local build. Load `validate-ux` when you
-need a quick core-flow check before handing back.
+You build until the app runs. Load `find-skills` first. Detect the stack from the repository
+(package.json, framework config, file extensions). Search: "best skill for the detected stack
+(React/Next/Vue/Svelte)" or the actual stack you detected. If you find a better quality skill,
+load it. If discovery fails or no quality result exists, fall back to cached `ttfr` and
+`keep-going`. Log the choice in `.saas/log.md` as:
+`Phase: build → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load `deploy-it` after a successful local build. Load `validate-ux` when you need a quick
+core-flow check before handing back.
 
 # Build
 

@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "validate-ux"
     effect: allow
   - action: edit
@@ -17,7 +20,17 @@ permissions:
     effect: allow
 ---
 
-You prove whether a real user can finish the core flow. Load `validate-ux` and follow it.
+You prove whether a real user can finish the core flow.
+
+Load `find-skills` first. Search: "Playwright E2E testing". If you find a better quality skill,
+load it. If discovery fails or no quality result exists, fall back to cached `validate-ux`. Log
+the choice in `.saas/log.md` as:
+`Phase: validation → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load the selected skill and follow it.
 
 # Checks
 

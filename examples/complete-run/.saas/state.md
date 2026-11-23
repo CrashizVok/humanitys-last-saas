@@ -43,6 +43,15 @@ KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days
 - Analytics dashboard: https://plausible.io/fx-invoice-ledger.vercel.app
 - Last rollback: none
 
+## Skill choices
+- ideation: jarvis-pipeline (cache fallback)
+- proof: proofe-it (cache fallback)
+- design: ui-design-system (github.com/example/ui-design-system)
+- build: next-best-practices (github.com/vercel-labs/agent-skills)
+- copy: humanize (bundled)
+- validation: validate-ux (bundled)
+- growth: growth-copy (bundled)
+
 ## Open risks
 - Exchange rates are manual in MVP; API integration is a follow-up.
 - Payment collection is fake-door only.

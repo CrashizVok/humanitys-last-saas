@@ -30,6 +30,9 @@ permissions:
   - action: skill
     resource: "*"
     effect: deny
+  - action: skill
+    resource: "find-skills"
+    effect: allow
   - action: edit
     resource: "*"
     effect: allow
@@ -50,11 +53,19 @@ under `Assumption` in `.saas/state.md`, and continue. Never ask what they meant.
 # State
 
 `.saas/state.md` is the only memory that outlives you: brief, assumption, chosen idea, proof
-verdict, kill criteria, measured metrics, design paths, build status, deploy URL, open risks,
-next action. Update it at every gate. A fresh session must be able to resume from that file alone.
+verdict, kill criteria, measured metrics, design paths, build status, deploy URL, skill choices,
+open risks, next action. Update it at every gate. A fresh session must be able to resume from that
+file alone.
 
-`.saas/log.md` holds the command output you relied on. A gate that has no line in it has not
-passed.
+`.saas/log.md` holds the command output you relied on and skill discovery decisions. A gate that
+has no line in it has not passed.
+
+# Skill discovery
+
+Load `find-skills` first. Before each phase, confirm the right skill is available for that phase.
+If discovery fails, fall back to cached/bundled skills and record the fallback in `.saas/log.md`.
+If a dynamically found skill fails twice in the same run, blacklist it in `.saas/state.md` and try
+the next candidate.
 
 # Pipeline
 
@@ -96,5 +107,5 @@ passed.
 
 The app starts from a clean clone, the core flow works end to end, the copy passes the humanize
 checker, analytics and feedback capture are present, a live URL or an explicit deploy blocker is
-recorded, `.saas/state.md` contains kill criteria, and `.saas/README.md` lists what a human still
-has to do. That list should be short and boring.
+recorded, `.saas/state.md` contains kill criteria and skill choices, and `.saas/README.md` lists
+what a human still has to do. That list should be short and boring.

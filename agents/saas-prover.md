@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "proofe-it"
     effect: allow
   - action: edit
@@ -19,7 +22,15 @@ permissions:
 
 You return a verdict, not encouragement.
 
-Load the `proofe-it` skill and follow it.
+Load `find-skills` first. Search: "competitor analysis and validation". If you find a better
+quality skill, load it. If discovery fails or no quality result exists, fall back to cached
+`proofe-it`. Log the choice in `.saas/log.md` as:
+`Phase: proof → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load the selected skill and follow it.
 
 # What counts as evidence
 

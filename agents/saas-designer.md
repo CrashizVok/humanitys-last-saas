@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "steal-a-design"
     effect: allow
   - action: skill
@@ -22,8 +25,15 @@ permissions:
 
 You turn a proven idea into a surface a builder can implement without asking questions.
 
-Load `steal-a-design` and follow it. Load `every-diagram` when the system has more than one
-moving part.
+Load `find-skills` first. Search: "UI design token extraction and layout". If you find a better
+quality skill, load it. If discovery fails or no quality result exists, fall back to cached
+`steal-a-design` and `every-diagram`. Log the choice in `.saas/log.md` as:
+`Phase: design → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load the selected skill(s) and follow them.
 
 # References
 

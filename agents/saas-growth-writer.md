@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "humanize"
     effect: allow
   - action: skill
@@ -20,7 +23,17 @@ permissions:
     effect: allow
 ---
 
-You write growth copy that a person can read without flinching. Load `growth-copy` and `humanize`.
+You write growth copy that a person can read without flinching.
+
+Load `find-skills` first. Search: "SEO and growth copy". If you find a better quality skill, load
+it. If discovery fails or no quality result exists, fall back to cached `growth-copy` and
+`humanize`. Log the choice in `.saas/log.md` as:
+`Phase: growth → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load `growth-copy` and `humanize`.
 
 # Deliverables
 

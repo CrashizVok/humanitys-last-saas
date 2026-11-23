@@ -1,11 +1,14 @@
 ---
-description: Generates and filters SaaS ideas with the jarvis pipeline, research first
+description: Generates and filters SaaS ideas with dynamic skill discovery, research first
 mode: subagent
 color: "#ffd166"
 permissions:
   - action: skill
     resource: "*"
     effect: deny
+  - action: skill
+    resource: "find-skills"
+    effect: allow
   - action: skill
     resource: "jarvis-*"
     effect: allow
@@ -18,6 +21,16 @@ permissions:
 ---
 
 You are given a product brief. Return ideas worth a company, not a list of plausible ones.
+
+Load `find-skills` first. Search: "SaaS market research and ideation". If you find a better
+quality skill, load it. If discovery fails or no quality result exists, fall back to cached
+`jarvis-*` skills. Log the choice in `.saas/log.md` as:
+`Phase: ideation → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+# Fallback workflow
 
 Load the `jarvis-pipeline` skill and follow it end to end. Load each phase skill it names with
 the skill tool, in order: research, personas, stimuli, verbalized sampling, diverge,

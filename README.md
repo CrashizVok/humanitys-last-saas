@@ -28,39 +28,56 @@ Then in a project:
 
 | Agent | Mode | Skills it may load | Job |
 | --- | --- | --- | --- |
-| `saas` | primary | none | Runs the loop, owns `.saas/state.md`, verifies the result |
-| `saas-ideator` | subagent | `jarvis-*` | Research first ideation, returns two defensible ideas |
-| `saas-prover` | subagent | `proofe-it` | Verdict `gap` or `no gap` with named competitors, quotes, and kill criteria |
-| `saas-designer` | subagent | `steal-a-design`, `every-diagram` | Tokens, layout, screenshots, architecture diagram |
-| `saas-builder` | subagent | `ttfr`, `keep-going`, `deploy-it`, `validate-ux` | Builds until it runs, deploys, records live URL or blocker |
-| `saas-writer` | subagent | `humanize` | Every user-visible string, checker must exit 0 |
-| `saas-validator` | subagent | `validate-ux` | Playwright core-flow check, reports `PASS` or `FAIL + exact step` |
-| `saas-growth-writer` | subagent | `humanize`, `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
+| `saas` | primary | `find-skills` | Runs the loop, owns `.saas/state.md`, routes phases |
+| `saas-ideator` | subagent | `find-skills`, `jarvis-*` fallback | Research first ideation, returns two defensible ideas |
+| `saas-prover` | subagent | `find-skills`, `proofe-it` fallback | Verdict `gap` or `no gap` with named competitors, quotes, and kill criteria |
+| `saas-designer` | subagent | `find-skills`, `steal-a-design`, `every-diagram` fallback | Tokens, layout, screenshots, architecture diagram |
+| `saas-builder` | subagent | `find-skills`, `ttfr`, `keep-going`, `deploy-it`, `validate-ux` | Builds, deploys, records live URL or blocker |
+| `saas-writer` | subagent | `find-skills`, `humanize` | Every user-visible string, checker must exit 0 |
+| `saas-validator` | subagent | `find-skills`, `validate-ux` | Playwright core-flow check, reports `PASS` or `FAIL + exact step` |
+| `saas-growth-writer` | subagent | `find-skills`, `humanize`, `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
 
-Each agent has a `skill` deny rule and a narrow allow list, so an agent cannot wander into
-another phase's method. The lead cannot load skills at all, which keeps it a scheduler.
+Each agent has a `skill` deny rule and a narrow allow list. Agents load `find-skills` first, then
+use discovered skills or fall back to cached/bundled skills.
 
-## Where the skills come from
+## Dynamic skill discovery
 
-Six repositories, fetched at plugin load and re-fetched on a timer:
+The plugin no longer hardcodes external skill repos. At startup it loads bundled skills and scans
+cached/discovered skill locations (`~/.cache/humanitys-last-saas/`, `~/.agents/skills/`,
+`~/.config/opencode/skills/`). It starts with zero pre-fetched remote skills.
 
-| Repository | Gives |
+During each phase, agents use `find-skills` to discover the best skill for the task:
+
+- `saas-ideator`: "SaaS market research and ideation"
+- `saas-prover`: "competitor analysis and validation"
+- `saas-designer`: "UI design token extraction and layout"
+- `saas-builder`: "best skill for the detected stack (React/Next/Vue/Svelte)"
+- `saas-writer`: "human-sounding copywriting"
+- `saas-validator`: "Playwright E2E testing"
+- `saas-growth-writer`: "SEO and growth copy"
+
+Quality gates before using a discovered skill: it has `SKILL.md`, clear description, reputable
+source, and acceptable install signal. If discovery fails or quality is weak, agents fall back to
+cached/bundled skills. If a dynamically found skill fails twice in a run, it is blacklisted in
+`.saas/state.md`.
+
+Skill choices are logged to `.saas/log.md`, for example:
+
+```text
+Phase: design → Found skill: ui-design-system → Loaded from: github.com/example/ui-design-system → Reason: token extraction workflow
+```
+
+## Bundled skills
+
+These ship inside the plugin and are always available as fallbacks/bootstrap:
+
+| Skill | Purpose |
 | --- | --- |
-| `CrashizVok/jarvis-thinking` | 15 `jarvis-*` skills |
-| `CrashizVok/proofe-it` | `proofe-it` |
-| `CrashizVok/steal-a-design` | `steal-a-design` |
-| `CrashizVok/every-diagram` | `every-diagram` |
-| `CrashizVok/keep-going` | `keep-going` |
-| `CrashizVok/ttfr` | `ttfr` |
-
-Checkouts land in `~/.cache/humanitys-last-saas/` as shallow clones. Each repository is fetched
-at most once an hour. If a fetch fails, the plugin warns and uses the cached checkout; if no cache
-exists, it continues without that repo instead of crashing. `humanize`, `deploy-it`,
-`validate-ux`, and `growth-copy` ship inside this package under `skills/`.
-
-Because the plugin registers these ids at runtime, do not also add the same repositories to
-`skills` in `opencode.json`. Two sources for one id is a race you cannot see. The same goes for
-the `jarvis-thinking` plugin: it registers the same `jarvis-*` ids, so keep one of the two.
+| `find-skills` | Dynamic skill discovery meta-skill |
+| `humanize` | Human-sounding copy and checker |
+| `deploy-it` | Vercel/Fly deploy, auth checks, rollback |
+| `validate-ux` | Playwright MVP validation |
+| `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
 
 ## Commands
 
@@ -85,16 +102,14 @@ Optional. The defaults need no config.
 }
 ```
 
-`refreshMinutes` is the minimum gap between fetches for one repository, default 180.
+`refreshMinutes` controls how often the plugin rescans local/cached skill directories.
 
 ## What it writes
 
-Inside the project it builds:
-
 ```text
 .saas/
-├── state.md          decisions, gates, kill criteria, metrics, deploy URL, next action
-├── log.md            command output the agents relied on
+├── state.md          decisions, gates, kill criteria, metrics, deploy URL, skill choices, next action
+├── log.md            command output and skill discovery decisions
 ├── ideas.md          survivors, difference sentences, rejections
 ├── proof.md          competitors, quotes, gap, wedge, kill criteria
 ├── design/           tokens, layout, shots, architecture
@@ -129,7 +144,7 @@ The script checks for analytics markers, a recorded live URL in `.saas/state.md`
 ## Example output
 
 See `examples/complete-run/.saas/` for a complete example with live URL, analytics dashboard, kill
-criteria, growth assets, feedback log, and validation result.
+criteria, growth assets, feedback log, validation result, and skill discovery log entries.
 
 ## What it will not do
 
@@ -150,4 +165,4 @@ npm run validate # validate a generated app from its project root
 
 ## License
 
-MIT for this package. The skills it loads keep their own licenses from their repositories.
+MIT for this package. Skills it loads keep their own licenses from their sources.

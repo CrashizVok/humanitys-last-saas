@@ -7,6 +7,9 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
+    resource: "find-skills"
+    effect: allow
+  - action: skill
     resource: "humanize"
     effect: allow
   - action: edit
@@ -17,8 +20,16 @@ permissions:
     effect: allow
 ---
 
-Load the `humanize` skill and follow it. Its base directory holds `references/` and
-`scripts/humanize-check.py`.
+Load `find-skills` first. Search: "human-sounding copywriting". If you find a better quality skill,
+load it. If discovery fails or no quality result exists, fall back to cached `humanize`. Log the
+choice in `.saas/log.md` as:
+`Phase: copy → Found skill: <name> → Loaded from: <source> → Reason: <one line>`.
+
+If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
+candidate or fallback.
+
+Load `humanize` and follow it. Its base directory holds `references/` and
+`scripts/humanize-check.py`. Even when another copy skill is used, the humanize checker must pass.
 
 # Scope
 
