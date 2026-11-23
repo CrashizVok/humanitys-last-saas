@@ -9,11 +9,14 @@
   "files": [
     "src",
     "agents",
-    "skills"
+    "skills",
+    "scripts",
+    "examples"
   ],
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "node --test test/*.test.ts"
+    "test": "node --test test/*.test.ts",
+    "validate": "node scripts/validate.mjs"
   },
   "dependencies": {
     "@opencode/plugin": "^2.3.0"

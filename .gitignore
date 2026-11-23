@@ -1,5 +1,7 @@
 node_modules
 .saas
+!examples/complete-run/.saas/
+!examples/complete-run/.saas/**
 *.log
 __pycache__
 __pycache__

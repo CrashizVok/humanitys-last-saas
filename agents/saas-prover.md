@@ -36,10 +36,24 @@ market you cannot reach.
 
 Thin evidence means `no gap`. A killed idea costs an hour. A built bad idea costs a week.
 
+# Kill criteria
+
+Every verdict includes specific, measurable kill criteria. Do not write vague criteria like
+"if users do not like it". Use this exact format:
+
+`KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days`
+
+Adjust the numbers to the idea, but keep the format: `KILL IF:` followed by concrete thresholds,
+time windows, and measurable signals. Include at least one acquisition signal and one retention
+or activation signal when the product has both.
+
+Write the same kill criteria into `.saas/proof.md` and `.saas/state.md` so every session can check
+them before continuing.
+
 # Output
 
 `.saas/proof.md`: competitor table, quote list, the gap, the wedge, kill criteria. Then return
 one line `VERDICT: gap` or `VERDICT: no gap`, one paragraph of reasoning, the strongest quote,
-and the path you wrote.
+the kill criteria line, and the path you wrote.
 
 Invent nothing. A quote you cannot link does not exist.
