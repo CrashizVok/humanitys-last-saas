@@ -45,9 +45,13 @@ KILL IF: <5% signup rate after 100 visitors OR >80% churn after 7 days
 - Security: input validation, safe headers, no secrets in client, minimal dependencies.
 
 ## Deploy
-- Live URL: https://fx-invoice-ledger.fly.dev
-- Admin dashboard: https://fly.io/apps/fx-invoice-ledger
-- Analytics dashboard: https://plausible.io/fx-invoice-ledger.fly.dev
+- Live URL: https://fx-invoice-ledger.zerohook.org
+- Fallback URL: https://fx-invoice-ledger.fly.dev (not used)
+- Coolify app: fx-invoice-ledger-mvp
+- Admin dashboard: https://coolify.example.internal/app/fx-invoice-ledger-mvp
+- Analytics dashboard: https://plausible.zerohook.org/fx-invoice-ledger
+- domain_status: active
+- DNS: *.zerohook.org wildcard via Cloudflare Tunnel
 - Last rollback: none
 
 ## Skill choices

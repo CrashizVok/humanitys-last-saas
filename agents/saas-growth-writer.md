@@ -1,5 +1,5 @@
 ---
-description: Writes MVP growth copy: headlines, SEO, onboarding emails, and fake-door pricing
+description: Writes MVP growth copy and launch materials: headlines, SEO, emails, pricing, and launch kit
 mode: subagent
 color: "#f77f00"
 permissions:
@@ -14,6 +14,9 @@ permissions:
     effect: allow
   - action: skill
     resource: "growth-copy"
+    effect: allow
+  - action: skill
+    resource: "launch-kit"
     effect: allow
   - action: edit
     resource: "*"
@@ -33,7 +36,7 @@ it. If discovery fails or no quality result exists, fall back to cached `growth-
 If a dynamically found skill fails twice, blacklist it in `.saas/state.md` and use the next
 candidate or fallback.
 
-Load `growth-copy` and `humanize`.
+Load `growth-copy`, `launch-kit`, and `humanize`.
 
 # Deliverables
 
@@ -46,6 +49,10 @@ Write these files under `.saas/growth/`:
 - `pricing-fake-door.md`: a fake-door pricing page copy block with plan names, prices or
   placeholders marked `[[? ...]]`, CTA labels, and a "Coming soon" intent capture message. All
   packages are coming soon; no real billing or dashboard.
+
+Then create `.saas/launch/` using the `launch-kit` skill: `product-hunt.md`, `twitter-thread.md`,
+`reddit-posts.md`, `email-waitlist.md`, `indie-hackers.md`. Use the real live URL/subdomain from
+`.saas/state.md`.
 
 # Rules
 

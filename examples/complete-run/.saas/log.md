@@ -19,11 +19,16 @@ $ docker build -t fx-invoice-ledger .
 Successfully tagged fx-invoice-ledger:latest
 
 ## 2026-11-23 deploy
-$ fly auth whoami
-example-user
+$ node scripts/coolify-deploy.mjs --action check
+{"ok":true}
 
-$ fly deploy
-https://fx-invoice-ledger.fly.dev
+$ node scripts/coolify-deploy.mjs --action deploy --uuid <app-uuid>
+{"status":"running"}
+
+$ node scripts/cloudflare-check.mjs zerohook.org fx-invoice-ledger
+{"wildcardLikely":true}
+
+Live URL: https://fx-invoice-ledger.zerohook.org (domain_status: active)
 
 ## 2026-11-23 validate
 $ npx playwright test

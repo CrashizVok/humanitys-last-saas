@@ -5,9 +5,23 @@ A landing page MVP for freelance translators who invoice in one currency and get
 It explains the value prop, shows packages as coming soon, and captures interest.
 
 ## Live URL
-- App: https://fx-invoice-ledger.fly.dev
-- Admin dashboard: https://fly.io/apps/fx-invoice-ledger
-- Analytics dashboard: https://plausible.io/fx-invoice-ledger.fly.dev
+- App: https://fx-invoice-ledger.zerohook.org
+- Admin dashboard: https://coolify.example.internal/app/fx-invoice-ledger-mvp
+- Analytics dashboard: https://plausible.zerohook.org/fx-invoice-ledger
+- DNS status: active (*.zerohook.org Cloudflare Tunnel wildcard)
+
+## Legal pages
+- /privacy
+- /terms
+- /cookies
+- /impressum
+
+## Launch materials
+- .saas/launch/product-hunt.md
+- .saas/launch/twitter-thread.md
+- .saas/launch/reddit-posts.md
+- .saas/launch/email-waitlist.md
+- .saas/launch/indie-hackers.md
 
 ## How to run
 
@@ -70,10 +84,15 @@ Use the kill criteria as a decision rule, not a vanity dashboard.
 - Fake-door and feedback logs avoid storing sensitive personal data.
 
 ## Deploy
-Deployed as a single production Docker container with `deploy-it` (Fly.io default). Rollback
-command: `fly releases rollback`.
+Deployed as a single production Docker container with `deploy-coolify` to Coolify. Domain routed by
+Cloudflare Tunnel wildcard `*.zerohook.org`. Rollback: use Coolify "restart with previous image".
+
+## Next steps
+- Share on Product Hunt using `.saas/launch/product-hunt.md`.
+- Check metrics in 7 days or run `/saas-validate`.
 
 ## Human still has to do
 - Add production analytics domain and verify events.
 - Connect feedback route to GitHub Issues or support email.
+- Review `[[LEGAL REVIEW]]` placeholders in legal pages.
 - Decide real pricing and replace fake-door flow when you are ready to build billing.
