@@ -28,14 +28,17 @@ Then in a project:
 
 | Agent | Mode | Skills it may load | Job |
 | --- | --- | --- | --- |
-| `saas` | primary | `find-skills` | Runs the loop, owns `.saas/state.md`, routes phases |
+| `saas` | primary | `find-skills` | Runs the loop, owns `.saas/state.md`, routes phases (full-pipeline or research-only) |
 | `saas-ideator` | subagent | `find-skills`, `jarvis-*` fallback | Trend-aware research first ideation, returns two quickly launchable ideas |
+| `saas-researcher` | subagent | `find-skills`, `proofe-it` fallback | Deep demand research: 10+ sources, verbatim quotes, workarounds, trend timing, adjacent markets |
 | `saas-prover` | subagent | `find-skills`, `proofe-it` fallback | Verdict `gap` or `no gap` with competitors, quotes, trend signals, launch-speed, and kill criteria |
 | `saas-designer` | subagent | `find-skills`, `steal-a-design`, `every-diagram` fallback | Tokens, layout, screenshots, architecture diagram |
-| `saas-builder` | subagent | `find-skills`, `ttfr`, `keep-going`, `deploy-it`, `validate-ux` | Builds a secure production landing page in one Docker container, deploys, records live URL or blocker |
+| `saas-builder` | subagent | `find-skills`, `ttfr`, `keep-going`, `deploy-coolify`, `validate-ux` | Builds a secure production landing page in one Docker container, deploys, records live URL or blocker |
 | `saas-writer` | subagent | `find-skills`, `humanize` | Every user-visible string, checker must exit 0 |
 | `saas-validator` | subagent | `find-skills`, `validate-ux` | Playwright core-flow check, reports `PASS` or `FAIL + exact step` |
-| `saas-growth-writer` | subagent | `find-skills`, `humanize`, `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
+| `saas-growth-writer` | subagent | `find-skills`, `humanize`, `growth-copy`, `launch-kit` | Headlines, SEO, emails, fake-door pricing, launch materials |
+| `saas-legal-writer` | subagent | `find-skills`, `humanize` | Privacy, terms, cookies, impressum template pages |
+| `saas-infrastructure` | subagent | `find-skills`, `deploy-coolify` | Coolify deploy, Cloudflare Tunnel/DNS, env vars, production verification |
 
 Each agent has a `skill` deny rule and a narrow allow list. Agents load `find-skills` first, then
 use discovered skills or fall back to cached/bundled skills.
@@ -75,15 +78,17 @@ These ship inside the plugin and are always available as fallbacks/bootstrap:
 | --- | --- |
 | `find-skills` | Dynamic skill discovery meta-skill |
 | `humanize` | Human-sounding copy and checker |
-| `deploy-it` | Dockerized production deploy, auth checks, rollback |
+| `deploy-coolify` | Coolify Docker deploy to `<slug>.zerohook.org`, Cloudflare Tunnel/DNS, rollback |
 | `validate-ux` | Playwright MVP validation |
 | `growth-copy` | Headlines, SEO, onboarding emails, fake-door pricing |
+| `launch-kit` | Product Hunt, X thread, Reddit, waitlist email, Indie Hackers launch materials |
 
 ## Commands
 
 | Command | Purpose |
 | --- | --- |
 | `/saas <brief>` | Run the full MVP factory pipeline |
+| `/saas-research <brief>` | Research-only: ideation, demand research, proof, and a committed `brain-think.md`. No build, no deploy |
 | `/saas-validate [context]` | Run MVP validation: deploy, analytics, Playwright core flow, kill criteria |
 
 ## Configure
@@ -108,16 +113,34 @@ Optional. The defaults need no config.
 
 ```text
 .saas/
-├── state.md          decisions, gates, kill criteria, metrics, deploy URL, skill choices, next action
-├── log.md            command output and skill discovery decisions
-├── ideas.md          survivors, difference sentences, trend signals, launch scope, rejections
-├── proof.md          competitors, quotes, trend signals, launch-speed assessment, gap, wedge, kill criteria
-├── design/           tokens, layout, shots, architecture
-├── growth/           headlines, SEO, onboarding emails, fake-door pricing
-├── feedback.md       user feedback and screenshots
-├── verify/           Playwright screenshots and validation artifacts
-└── README.md         what it is, live URL, analytics, metrics guide, human TODOs
+├── state.md            decisions, gates, mode, kill criteria, metrics, deploy URL, DNS status, skill choices, next action
+├── log.md              command output and skill discovery decisions
+├── ideas.md            survivors, difference sentences, trend signals, launch scope, rejections
+├── research.md         deep demand research: sources, verbatim quotes, workarounds, trend timing, adjacent markets
+├── proof.md            competitors, quotes, trend signals, launch-speed assessment, gap, wedge, kill criteria
+├── brain-think.md      research-only output: assumptions, research log, ideas, proof, verdict, next actions
+├── brain-think-runN.md additional research-only runs (no overwrite)
+├── design/             tokens, layout, shots, architecture
+├── growth/             headlines, SEO, onboarding emails, fake-door pricing
+├── launch/             Product Hunt, X thread, Reddit, waitlist email, Indie Hackers drafts
+├── feedback.md         user feedback and screenshots
+├── verify/             Playwright screenshots and validation artifacts
+└── README.md           what it is, live URL, DNS status, analytics, legal/launch links, metrics guide, human TODOs
 ```
+
+## Research-only mode
+
+`/saas-research <brief>` runs the front half of the pipeline and stops before design:
+
+1. `saas-ideator` generates ideas with trend research.
+2. `saas-researcher` collects 10+ sources, verbatim quotes, workarounds, trend timing, and adjacent markets into `.saas/research.md`.
+3. `saas-prover` returns `gap`, `no gap`, or the best-evidenced survivor after `max_research_rounds`.
+4. The lead writes `.saas/brain-think.md` from `templates/brain-think.md`.
+5. The research is committed: `research: <slug> — <verdict> — <YYYY-MM-DD>`.
+
+No application code is written. Set `mode: research-only` in `.saas/state.md` or use `/saas-research`.
+Multiple runs create `brain-think-runN.md` instead of overwriting. `scripts/research-commit.mjs` can
+commit the `.saas/` research artifacts manually.
 
 ## MVP factory guarantees
 
@@ -130,8 +153,14 @@ Optional. The defaults need no config.
   is a fake-door intent capture that shows "Coming soon" and does not charge.
 - **Secure by default:** generated code validates input, keeps secrets out of the client, uses safe
   security headers, avoids dangerous user-input execution, and keeps dependencies minimal.
-- **Deploy:** `saas-builder` loads `deploy-it` after a successful build and Docker build. Default is
-  Fly.io for Dockerized MVPs. Deploy failures roll back to the last working deployment and log why.
+- **Deploy:** `saas-builder`/`saas-infrastructure` load `deploy-coolify` after a successful build
+  and Docker build. Default target is Coolify on your VPS, routed via Cloudflare Tunnel to
+  `https://<slug>.zerohook.org`. If Coolify or DNS is blocked, the system falls back to local
+  docker-compose and marks `DEPLOY PENDING`/`DNS PENDING` with exact instructions.
+- **Legal and SEO:** every MVP includes `/privacy`, `/terms`, `/cookies`, `/impressum` templates,
+  robots/sitemap/favicon/og-image/manifest, canonical/OG/Twitter/JSON-LD metadata.
+- **Launch kit:** `.saas/launch/` includes Product Hunt, X thread, Reddit posts, waitlist email,
+  and Indie Hackers draft.
 - **Analytics:** every built app includes a lightweight Plausible or Umami snippet and a fake-door
   pay intent action that logs interest and shows "Coming soon".
 - **Validation:** `saas-validator` runs Playwright end-to-end checks and reports `PASS` or

@@ -78,7 +78,7 @@ export default Plugin.define({
 
     await sync().catch((error) => warn(`initial skill scan failed: ${error instanceof Error ? error.message : String(error)}`))
 
-    const saasAgents = new Set(["saas", "saas-builder", "saas-prover", "saas-designer", "saas-ideator", "saas-writer", "saas-validator", "saas-growth-writer"])
+    const saasAgents = new Set(["saas", "saas-builder", "saas-prover", "saas-designer", "saas-ideator", "saas-researcher", "saas-writer", "saas-validator", "saas-growth-writer", "saas-legal-writer", "saas-infrastructure"])
 
     await ctx.session.hook("context", async (input) => {
       if (!saasAgents.has(String(input.agent))) return
@@ -91,18 +91,21 @@ export default Plugin.define({
           "- During market research, check current trend sources (Product Hunt, Hacker News, Indie Hackers, Google Trends) and prefer quickly launchable SaaS ideas with narrow MVP scope.",
           "- Build a production-ready landing page in one Docker container. No real dashboard or authenticated app area. Include pricing/packages marked Coming soon with fake-door intent capture.",
           "- Write secure-by-default code: validate input, no secrets in client, safe headers, minimal dependencies, no dangerous user-input execution.",
-          "- After a successful build and Docker build, deploy with the deploy-it skill (Fly.io default for Dockerized MVPs). Record the live URL in .saas/README.md and .saas/state.md.",
+          "- Deploy to Coolify on the user's VPS and route via Cloudflare Tunnel to <slug>.zerohook.org. If Coolify/DNS is blocked, fall back to docker-compose.local.yml and mark DEPLOY PENDING / DNS PENDING with exact instructions.",
+          "- Generate legal pages (/privacy /terms /cookies /impressum), SEO assets (robots, sitemap, favicon, og-image 1200x630, manifest, canonical/OG/JSON-LD), and launch materials in .saas/launch/.",
+          "- Every built app must include lightweight analytics (Plausible/Umami), fake_door_click/feedback_submitted/signup_intent events, UTM support, and /feedback with screenshot capture.",
           "- If deployment fails, roll back to the last working deployed version, log the reason in .saas/log.md, and do not claim a live URL.",
-          "- Every built app must include lightweight analytics (Plausible or Umami), a fake-door pay intent log, and a /feedback route with screenshot capture.",
+          "- Never ask for clarification or approval; make defensible assumptions and document them. Only stop for missing API tokens, Coolify unreachable, or explicit user interrupt.",
           "- Run saas-validator Playwright checks before handoff. A core landing-page flow that cannot complete is FAIL.",
           "- Record kill criteria and measured metrics in .saas/state.md; check them before continuing work.",
+          "- In research-only mode (`mode: research-only` in .saas/state.md or /saas-research command): stop after proof, write .saas/brain-think.md from templates/brain-think.md, commit the research, and do not build/deploy/validate.",
         ].join("\n"),
       } as any)
     })
 
     await ctx.session.hook("prompt", async (input) => {
       const text = input.prompt?.text ?? ""
-      if (!/\b(deploy|validate|kill criteria|analytics|feedback|skill|find-skills|trend|product hunt|launch)\b/i.test(text)) return
+      if (!/\b(deploy|validate|kill criteria|analytics|feedback|skill|find-skills|trend|product hunt|launch|research-only|brain-think|saas-research)\b/i.test(text)) return
       input.metadata = {
         ...(input.metadata ?? {}),
         mvpFactory: {
@@ -111,6 +114,7 @@ export default Plugin.define({
           metrics: /\b(kill criteria|analytics|feedback)\b/i.test(text),
           skillDiscovery: /\b(skill|find-skills)\b/i.test(text),
           trendResearch: /\b(trend|product hunt|launch)\b/i.test(text),
+          researchOnly: /\b(research-only|brain-think|saas-research)\b/i.test(text),
         },
       }
     })
@@ -126,6 +130,26 @@ export default Plugin.define({
             delivery,
             text: [
               "Start the humanitys-last-saas pipeline.",
+              "Use find-skills to discover phase skills dynamically; fall back to cached/bundled skills if discovery fails.",
+              "",
+              `Brief: ${prompt.text.trim() || "no brief given, pick the opportunity you can prove strongest"}`,
+            ].join("\n"),
+          })
+        },
+      })
+
+      editor.add({
+        name: "saas-research",
+        description: "Research-only: ideation, demand research, proof, brain-think.md. No build, no deploy",
+        execute: async ({ sessionID, prompt, delivery }) => {
+          await ctx.session.switchAgent({ sessionID, agent: "saas" }).catch(() => {})
+          await ctx.session.prompt({
+            sessionID,
+            delivery,
+            text: [
+              "Start the humanitys-last-saas pipeline in RESEARCH-ONLY mode.",
+              "Set mode: research-only in .saas/state.md before phase 1. Do NOT build, deploy, or write application code.",
+              "Pipeline: saas-ideator -> saas-researcher -> saas-prover -> STOP. Then write .saas/brain-think.md (or next run file) from templates/brain-think.md and commit the research.",
               "Use find-skills to discover phase skills dynamically; fall back to cached/bundled skills if discovery fails.",
               "",
               `Brief: ${prompt.text.trim() || "no brief given, pick the opportunity you can prove strongest"}`,
